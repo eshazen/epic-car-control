@@ -476,6 +476,241 @@
         )
       )
     )
+    (symbol "Mechanical:Housing" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+      (property "Reference" "N" (at 3.81 0 0)
+        (effects (font (size 1.27 1.27)) (justify left))
+      )
+      (property "Value" "Housing" (at 3.81 -1.905 0)
+        (effects (font (size 1.27 1.27)) (justify left))
+      )
+      (property "Footprint" "" (at 1.27 1.27 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Datasheet" "~" (at 1.27 1.27 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_keywords" "housing enclosure" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_description" "Housing" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_fp_filters" "Enclosure* Housing*" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (symbol "Housing_0_1"
+        (rectangle (start -5.08 -0.635) (end -1.27 -1.905)
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (circle (center -4.445 -3.175) (radius 0.635)
+          (stroke (width 0) (type default))
+          (fill (type outline))
+        )
+        (circle (center -1.905 -3.175) (radius 0.635)
+          (stroke (width 0) (type default))
+          (fill (type outline))
+        )
+        (polyline
+          (pts
+            (xy -4.5212 -1.5748)
+            (xy -4.4704 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -4.4196 -1.6764)
+            (xy -4.064 -1.6764)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -4.4196 -1.2192)
+            (xy -4.3688 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -4.318 -1.3208)
+            (xy -4.0132 -1.3208)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -4.2164 -0.9144)
+            (xy -3.9116 -0.9144)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.9116 -1.6256)
+            (xy -3.8608 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.81 -1.2192)
+            (xy -3.7592 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.6068 -1.5748)
+            (xy -3.556 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.5052 -1.6764)
+            (xy -3.1496 -1.6764)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.5052 -1.2192)
+            (xy -3.4544 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.4036 -1.3208)
+            (xy -3.0988 -1.3208)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -3.302 -0.9144)
+            (xy -2.9972 -0.9144)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.9972 -1.6256)
+            (xy -2.9464 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.8956 -1.2192)
+            (xy -2.8448 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.6924 -1.5748)
+            (xy -2.6416 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.5908 -1.6764)
+            (xy -2.2352 -1.6764)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.5908 -1.2192)
+            (xy -2.54 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.4892 -1.3208)
+            (xy -2.1844 -1.3208)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.3876 -0.9144)
+            (xy -2.0828 -0.9144)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -2.0828 -1.6256)
+            (xy -2.032 -1.3716)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -1.9812 -1.2192)
+            (xy -1.9304 -0.9652)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -0.635 0)
+            (xy -0.635 -4.445)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -5.715 0)
+            (xy -0.635 0)
+            (xy 3.175 3.81)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy -5.715 0)
+            (xy -5.715 -4.445)
+            (xy -0.635 -4.445)
+            (xy 3.175 -0.635)
+            (xy 3.175 3.81)
+            (xy -1.905 3.81)
+            (xy -5.715 0)
+          )
+          (stroke (width 0) (type default))
+          (fill (type background))
+        )
+      )
+    )
     (symbol "Mechanical:MountingHole" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "H" (at 0 5.08 0)
         (effects (font (size 1.27 1.27)))
@@ -1299,7 +1534,7 @@
     (property "Value" "LED" (at 148.59 93.98 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "LED_THT:LED_D3.0mm_Clear" (at 144.78 97.79 0)
+    (property "Footprint" "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z2.0mm" (at 144.78 97.79 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 144.78 97.79 0)
@@ -1311,6 +1546,30 @@
       (project "car_control"
         (path "/08ff0388-b5fa-44e5-b165-5596a9674913"
           (reference "D4") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Mechanical:Housing") (at 87.63 160.02 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid 0c697033-97f5-430f-bdba-ff4487142969)
+    (property "Reference" "N1" (at 91.44 159.7025 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "Housing" (at 91.44 162.2425 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "rhett_logo:rhett_logo" (at 88.9 158.75 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 88.9 158.75 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (instances
+      (project "car_control"
+        (path "/08ff0388-b5fa-44e5-b165-5596a9674913"
+          (reference "N1") (unit 1)
         )
       )
     )
@@ -1750,7 +2009,7 @@
     (property "Value" "LED" (at 148.59 101.6 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "LED_THT:LED_D3.0mm_Clear" (at 144.78 105.41 0)
+    (property "Footprint" "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z2.0mm" (at 144.78 105.41 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 144.78 105.41 0)
@@ -1800,7 +2059,7 @@
     (property "Value" "LED" (at 148.59 109.22 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "LED_THT:LED_D3.0mm_Clear" (at 144.78 113.03 0)
+    (property "Footprint" "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z2.0mm" (at 144.78 113.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 144.78 113.03 0)
@@ -2130,7 +2389,7 @@
     (property "Value" "LED" (at 148.59 116.84 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "LED_THT:LED_D3.0mm_Clear" (at 144.78 120.65 0)
+    (property "Footprint" "LED_THT:LED_D3.0mm_Horizontal_O3.81mm_Z2.0mm" (at 144.78 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 144.78 120.65 0)
