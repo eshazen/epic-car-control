@@ -4,4 +4,6 @@
   (lib (name "rhett_logo")(type "KiCad")(uri "${KIPRJMOD}/rhett_logo.pretty")(options "")(descr ""))
   (lib (name "my_opto")(type "KiCad")(uri "${KIPRJMOD}/my_opto.pretty")(options "")(descr ""))
   (lib (name "my_terminal")(type "KiCad")(uri "${KIPRJMOD}/my_terminal.pretty")(options "")(descr ""))
+  (lib (name "my_pushbutton")(type "KiCad")(uri "${KIPRJMOD}/my_pushbutton.pretty")(options "")(descr ""))
+  (lib (name "my_speaker")(type "KiCad")(uri "${KIPRJMOD}/my_speaker.pretty")(options "")(descr ""))
 )
