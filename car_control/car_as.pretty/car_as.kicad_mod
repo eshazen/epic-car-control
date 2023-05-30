@@ -24,7 +24,7 @@
   (pad "" np_thru_hole circle (at 38.735 116.586) (size 3.81 3.81) (drill 3.81) (layers "F&B.Cu" "*.Mask") (tstamp 5ee16eea-4361-4438-9ad6-daba1914d737))
   (pad "" np_thru_hole circle (at 126.365 82.296) (size 3.81 3.81) (drill 3.81) (layers "F&B.Cu" "*.Mask") (tstamp 029b934c-04d5-4ad4-b86b-60aad38090db))
   (model "/home/hazen/work/epic-car-control/mech/car_as_footprint.wrl"
-    (offset (xyz 64.135 -82.55 -34.29))
+    (offset (xyz 64.135 -82.55 -24.765))
     (scale (xyz 10 10 10))
     (rotate (xyz 0 0 0))
   )

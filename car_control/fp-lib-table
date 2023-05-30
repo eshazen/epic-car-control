@@ -8,4 +8,5 @@
   (lib (name "my_speaker")(type "KiCad")(uri "${KIPRJMOD}/my_speaker.pretty")(options "")(descr ""))
   (lib (name "my_arduino")(type "KiCad")(uri "${KIPRJMOD}/my_arduino.pretty")(options "")(descr ""))
   (lib (name "car_as")(type "KiCad")(uri "${KIPRJMOD}/car_as.pretty")(options "")(descr ""))
+  (lib (name "my_10mm_led")(type "KiCad")(uri "${KIPRJMOD}/my_10mm_led.pretty")(options "")(descr ""))
 )
