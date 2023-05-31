@@ -15,7 +15,7 @@ pin_z = 25;
 pin_s = 2.54;
 
 // bend pin at this Z
-pin_b = 6;
+pin_b = 2;
 
 module pin_at( x, y, ra, pl) {
   if( ra == 1) {
@@ -46,7 +46,9 @@ module led( colr, ra) {
   }
 }
 
-
-led( [1, 1, 1, 0.5], 1);
+// white
+// led( [1, 1, 1, 0.75], 1);
+// red
+led( [1, 0, 0, 0.75], 1);
 
   
