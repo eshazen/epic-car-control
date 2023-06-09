@@ -1,0 +1,134 @@
+/*
+ * EPIC model car
+ * Wait for pushbutton
+ * run for configured distance
+ * stop
+ */
+
+#include <ezBuzzer.h>
+
+// pins
+#define LED1_PIN 4
+#define LED2_PIN 5
+#define LED3_PIN 6
+#define LED4_PIN 7
+#define MOTOR_PIN 3
+#define SENS_LED_PIN 2
+#define SENS_INPUT_PIN A0
+#define SERVO1_PIN 9
+#define SERVO2_PIN 10
+#define SPKR_PIN 16
+#define BUTTON_PIN A1
+
+// states
+#define S_IDLE 0
+#define S_ACCEL 1
+#define S_RUN 2
+#define S_DECEL 3
+
+// other constants
+#define TARGET_DISTANCE 10   // desired distance in revolutions
+#define ACCEL 5   // acceleration in speed units per tick
+#define SENSOR_THRESHOLD 900  // proximity sensor threshold
+
+// variables
+uint8_t state;  // current state from above
+int m_speed;  // current motor speed
+int distance;   // distance since start
+
+// initialize buzzer library
+ezBuzzer buzzer( SPKR_PIN);
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  // Declare output pins
+  pinMode(LED1_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
+  pinMode(LED3_PIN, OUTPUT);
+  pinMode(LED4_PIN, OUTPUT);
+  pinMode(SPKR_PIN, OUTPUT);
+  pinMode(MOTOR_PIN, OUTPUT);
+  pinMode(SENS_LED_PIN, OUTPUT);
+
+  // button is an input with pullup
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  // start with motor and LEDs off
+  digitalWrite( MOTOR_PIN, LOW);
+  digitalWrite( LED1_PIN, LOW);
+  digitalWrite( LED2_PIN, LOW);
+  digitalWrite( LED3_PIN, LOW);
+  digitalWrite( LED4_PIN, LOW);
+  digitalWrite( SENS_LED_PIN, LOW);
+  
+  state = S_IDLE;
+
+  buzzer.beep(500);
+}
+
+
+
+// the loop function runs over and over again forever
+void loop() {
+
+   
+  switch( state) {
+    
+    case S_IDLE:   // idle state, waiting for button press
+      // wait for button
+      if( digitalRead( BUTTON_PIN) == LOW) {
+        state = S_ACCEL;
+        m_speed = 0;
+        digitalWrite( LED1_PIN, HIGH);      // light one of the headlights
+        digitalWrite( SENS_LED_PIN, HIGH);  // activate the sensor
+        buzzer.beep(50);
+      }
+      break;
+      
+    case S_ACCEL:  // accelerating
+      m_speed += ACCEL;
+      if( m_speed > 255) {
+        m_speed = 255;
+        state = S_RUN;
+        digitalWrite( LED2_PIN, HIGH);
+      }
+      break;
+      
+    case S_RUN:   // running
+      // check distance
+      if( analogRead( SENS_INPUT_PIN) < SENSOR_THRESHOLD) {
+        digitalWrite( LED4_PIN, HIGH);
+        ++distance;
+        buzzer.beep(10);
+        if( distance > TARGET_DISTANCE) {
+          state = S_DECEL;
+        }
+      } else
+        digitalWrite( LED4_PIN, LOW);
+      break;
+
+    case S_DECEL:  // slowing down
+      m_speed -= ACCEL;
+      if( m_speed <= 0) {              // we're stopped
+        m_speed = 0;
+        state = S_IDLE;
+        distance = 0;
+        // turn off all the LEDs
+        digitalWrite( LED1_PIN, LOW);
+        digitalWrite( LED2_PIN, LOW);
+        digitalWrite( LED3_PIN, LOW);
+        digitalWrite( LED4_PIN, LOW);
+        // turn of the distance sensor to save power
+        digitalWrite( SENS_LED_PIN, LOW);
+        buzzer.beep(500);
+      }
+      break;
+
+    default:
+      state = S_IDLE;      
+  }
+  if( state != S_IDLE)
+    analogWrite( MOTOR_PIN, m_speed);
+ 
+  delay(50);  // run the loop at about 20Hz
+}
