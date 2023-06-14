@@ -36,9 +36,14 @@
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
-  (model "/home/hazen/work/epic-car-control/mech/led_10mm-white.wrl"
-    (offset (xyz 1 -6 6))
+  (model "/home/hazen/work/epic-car-control/mech/led_10mm-white.wrl" hide
+    (offset (xyz 1.27 -2.189988 5.999988))
     (scale (xyz 0.394 0.394 0.394))
+    (rotate (xyz -90 0 0))
+  )
+  (model "/home/hazen/work/epic-car-control/mech/led_10mm-White.step"
+    (offset (xyz 1.27 -1.905 5.715))
+    (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
   )
 )
