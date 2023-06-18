@@ -3,6 +3,8 @@
 Arduino-based model car control for EPIC.  This is a PCB which mounts
 on a model car used in the Partner Classes taught at EPIC.
 
+* [Software Development Log](SoftwareLog.md)
+
 ## Hardware features
 
 * Arduino pro micro socket
