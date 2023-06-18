@@ -57,13 +57,7 @@ module opto() {
 
 pcb_above_batt = 0.125;
 
-module pcb() {
-     translate( [0, 0, chassis_z+batt_z+pcb_above_batt]) {
-	  // PCB outline from DXF
-	  color("red")
-	       linear_extrude( height=0.063, center=true, convexity=10) {
-	       import("modified_chassis.dxf", layer="PCB");
-	  }
+module arduino() {
 	  // imported arduino from STL
 	  color("cyan")
 	       translate( [2, -0.35, 0.2])
@@ -71,9 +65,16 @@ module pcb() {
 	       scale( [0.0394, 0.0394, 0.0394])
 	       import("Pro_Micro.stl");
 	  //
-	  rotate( [270, 0, 0])
-	  translate( [3, 0, 1.4])
-	  opto();
+}
+
+module pcb() {
+     translate( [0, 0, chassis_z+batt_z+pcb_above_batt]) {
+	  // PCB outline from DXF
+	  color("red")
+	       linear_extrude( height=0.063, center=true, convexity=10) {
+	       import("modified_chassis.dxf", layer="PCB");
+	  }
+//	  rotate( [270, 0, 0]) translate( [3, 0, 1.4]) opto();
      }
 }
 
