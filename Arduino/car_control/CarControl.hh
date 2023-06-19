@@ -1,18 +1,21 @@
 //
 // CarControl class
 //
-// CarControl()                      constructor; setup I/O
-// setMode( options)                 set mode options
-// clearMode( options)               reset mode options
-// setSpeed( speed)                  set motor speed 0-255
-// setHeadLights( left, right)       set headlights on/off
-// setTailLights( left, right)       set taillights on/off
-// readSensor
+// CarControl()                           constructor; setup I/O
+// void setMode( options)                 set mode options
+// void clearMode( options)               reset mode options
+// void setSpeed( speed)                  set motor speed 0-255
+// void setHeadLights( left, right)       set headlights on/off
+// void setTailLights( left, right)       set taillights on/off
+// void updateButton()                    call every 20ms to scan for button
+// bool buttonPressed()                   if button pressed since last call
+// bool buttonLong()                      if last press was a long press
+// void updateRevs()                      check revolution sensor and update
+// void clearRevs()                       clear the rev sensor
+// int getRevs()                         check the rev sensor
 
 #ifndef CarControl_h
 #define CarControl_h
-
-#include <ezBuzzer.h>
 
 // pins
 #define LED1_PIN 4
@@ -27,17 +30,49 @@
 #define SPKR_PIN 16
 #define BUTTON_PIN A1
 
-// states
-#define S_IDLE 0
-#define S_ACCEL 1
-#define S_RUN 2
-#define S_DECEL 3
+// car states
+enum { 
+  // normal run states
+  S_IDLE, S_ACCEL, S_RUN, S_DECEL,
+  // programming states
+  SP_TENS, SP_ONES, SP_EXIT
+};
+
+// button press states
+enum {
+  B_IDLE, B_PRESS, B_WAIT, B_RELEASE
+};
 
 // other constants
 #define TARGET_DISTANCE 10   // desired distance in revolutions
 #define ACCEL 5   // acceleration in speed units per tick
-#define SENSOR_THRESHOLD 900  // proximity sensor threshold
+#define BUTTON_DEBOUNCE_TICKS 5  // button debounce in 20ms ticks
+#define BUTTON_LONG_PRESS 100    // button long press in 20ms ticks
 
+#define SENSOR_DELTA 50  // proximity sensor threshold
+#define SENSOR_DEBOUNCE_TICKS 5
+
+// tone / duration pairs
+struct {
+  int pitch;
+  int dur;
+} tones[] = {
+  {440, 100},			// short
+  {440, 500},			// long
+  {880, 20},			// tick
+  {880, 500},			// high
+  {220, 500},			// low
+  {660, 1000}			// error
+};
+
+enum {
+  BEEP_SHORT = 0,
+  BEEP_LONG = 1,
+  BEEP_TICK = 2,
+  BEEP_HIGH = 3,
+  BEEP_LOW = 4,
+  BEEP_ERROR = 5
+};
 
 enum CarControlOptions {
   FixedDistance, EnableButton, BlinkHeadlights, BlinkTaillights
@@ -50,21 +85,34 @@ public:
   void setSpeed( int speed);
   void setHeadLights( int left, int right);
   void setTailLights( int left, int right);
-  void beep( int dur);
-	       
+  void beep( int type);
+  void updateButton();
+  bool buttonPressed();
+  bool buttonLong();
+  void updateRevs();
+  void clearRevs();
+  int getRevs();
+  
 private:
   // variables
-  uint8_t state;  // current state from above
   int m_speed;  // current motor speed
   int distance;   // distance since start
-  ezBuzzer* buzz;
   CarControlOptions options;
+  // button stuff
+  uint8_t debounceTime;		// debounce timer
+  uint8_t buttonState;		// button state
+  uint8_t pressTime;		// button press time for long press
+  bool pressed;			// button pressed
+  bool longpress;               // long press
+  bool didpress;		// recorded a press
+  // rev sensor stuff
+  int revCount;			// revolution counter
+  uint8_t revTime;		// revolution "debounce" time
+  int sens, sens0;		// current and previous sensor readings
 };
 
 CarControl::CarControl() {
   
-// initialize buzzer library
-  buzz = new ezBuzzer( SPKR_PIN);
   // Declare output pins
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
@@ -83,19 +131,20 @@ CarControl::CarControl() {
   digitalWrite( LED2_PIN, LOW);
   digitalWrite( LED3_PIN, LOW);
   digitalWrite( LED4_PIN, LOW);
-  digitalWrite( SENS_LED_PIN, LOW);
+  // enable rotation sensor
+  digitalWrite( SENS_LED_PIN, HIGH);
   
-  state = S_IDLE;
-
-  buzz->beep(500);
-
+  debounceTime = distance = m_speed = 0;
+  pressTime = 0;
+  buttonState = B_IDLE;
+  longpress = didpress = pressed = false;
+  revCount = 0;
+  revTime = 0;
 }
 
 void CarControl::setMode( enum CarControlOptions opt) {
   options = opt;
 }
-
-
 
 void CarControl::setSpeed( int speed) {
   m_speed = speed;
@@ -113,8 +162,117 @@ void CarControl::setTailLights( int left, int right) {
   digitalWrite( LED4_PIN, right);
 }
 
-void CarControl::beep( int dur) {
-  buzz->beep( dur);
+void CarControl::beep( int type) {
+  tone( SPKR_PIN, tones[type].pitch, tones[type].dur);
+  // tone( SPKR_PIN, 440, 100);
 }
+
+
+void CarControl::updateButton() {
+
+  switch( buttonState) {
+
+  // idle: check for initial press
+  case B_IDLE:
+    if( !digitalRead( BUTTON_PIN)) {
+      debounceTime = BUTTON_DEBOUNCE_TICKS;
+      buttonState = B_PRESS;
+    }
+    break;
+    
+  // pressed: wait for countdown 
+  case B_PRESS:
+    if( --debounceTime == 0) {	// count down complete?
+      if( digitalRead( BUTTON_PIN)) { // released?
+	debounceTime = BUTTON_DEBOUNCE_TICKS;
+	buttonState = B_RELEASE;
+	longpress = false;
+	pressed = true;
+	didpress = true;
+      } else {
+	// not released, go to wait state
+	buttonState = B_WAIT;
+	pressTime = BUTTON_DEBOUNCE_TICKS;
+      }
+    }
+    break;
+
+  // wait for release, check for long press
+  case B_WAIT:
+    // register a long press
+    if( pressTime > BUTTON_LONG_PRESS && !didpress) {
+      	longpress = true;
+	pressed = false;
+	didpress = true;	// protect against duplcate presses
+    }
+    
+    if( digitalRead( BUTTON_PIN)) { // released?
+      debounceTime = BUTTON_DEBOUNCE_TICKS;
+      buttonState = B_RELEASE;
+      if( !didpress) {
+	pressed = true;
+	longpress = false;
+      }
+    } else {
+      ++pressTime;
+    }
+
+    break;
+
+  // wait for timeout
+  case B_RELEASE:
+    if( debounceTime) {
+      --debounceTime;
+    } else {
+      buttonState = B_IDLE;
+      didpress = false;
+    }
+    break;
+
+  }
+
+
+}
+
+bool CarControl::buttonPressed() {
+  if( pressed) {
+    pressed = false;
+    return true;
+  }
+  return false;
+}
+
+
+bool CarControl::buttonLong() {
+  if( longpress) {
+    longpress = false;
+    return true;
+  }
+  return false;
+}
+
+
+void CarControl::updateRevs() {
+  if( revTime) {
+    --revTime;
+  } else {
+    sens0 = sens;
+    sens = analogRead( SENS_INPUT_PIN);
+    if( sens - sens0 > SENSOR_DELTA) {
+      revTime = SENSOR_DEBOUNCE_TICKS;
+      ++revCount;
+      beep(BEEP_TICK);
+    }
+  }
+}
+
+void CarControl::clearRevs() {
+  revCount = 0;
+}
+
+int CarControl::getRevs() {
+  return revCount;
+}
+
 
 #endif

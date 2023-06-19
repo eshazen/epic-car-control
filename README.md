@@ -18,37 +18,19 @@ on a model car used in the Partner Classes taught at EPIC.
 
 ## Software
 
-Here's a tentative spec for the software:
+Software operation:
 
-### Normal mode (power-up without button pressed)
+>
+> power-up reads distance set from EEPROM
+>    long (error) beep means invalid setting (default to 5)
+> Idle mode
+>    short press - drive for programmed distance
+>    long press - move to 10's set mode
+> 10's set mode
+>    short press: add 10 revs
+>    long press: to 1's set mode
+> 1's set mode
+>    short press: add 1 revs
+>    long press: save setting and exit to IDLE
+>
 
-* One long beep
-* Flash a chase on the 4 LEDs
-* Twitch the motor
-* Test the optical sensor, multiple beeps on fail
-
-On button press:
-
-* One short beep
-* Accelerate to full speed
-* Count wheel rotations to programmed value
-* Decelerate to stop
-* One short beep
-
-### Programming mode 
-
-Power-up with button pressed, or one long (2s) button press.
-
-Resets to default of zero revolutions of the sensor.
-
-* Two short beeps entering mode
-* Each short button press adds 10 revs to the count
-  <br>Count displayed in binary on the LEDs, maximum 9.
-  <br>Short beep when count increments, long beep if at limit.
-* Long press to advance to single revs mode (3 beeps entering mode)
-* Each short button press adds 1 rev to the count
-  <br>Count displayed in binary on the LEDs, maximum 9.
-  <br>Short beep when count increments, long beep if at limit.
-* Long press to exit programming mode
-  <br>Three beeps, return to normal mode
-  
