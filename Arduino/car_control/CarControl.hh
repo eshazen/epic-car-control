@@ -8,11 +8,14 @@
 // void setHeadLights( left, right)       set headlights on/off
 // void setTailLights( left, right)       set taillights on/off
 // void updateButton()                    call every 20ms to scan for button
+// bool readButton()                      read currentbutton status
 // bool buttonPressed()                   if button pressed since last call
 // bool buttonLong()                      if last press was a long press
 // void updateRevs()                      call every 20ms to check rev sensor
 // void clearRevs()                       clear the rev sensor
 // int getRevs()                          read rev sensor count
+// int readSensor()                       return analog sensor reading
+//                                        as 1024-reading
 
 #ifndef CarControl_h
 #define CarControl_h
@@ -35,7 +38,7 @@ enum {
   // normal run states
   S_IDLE, S_ACCEL, S_RUN, S_DECEL,
   // programming states
-  SP_TENS, SP_ONES, SP_EXIT
+  SP_TENS, SP_ONES, SP_EXIT, S_DIAG, S_DIAG1, S_DIAG2
 };
 
 // button press states
@@ -50,6 +53,8 @@ enum {
 
 #define SENSOR_DELTA 50		 // proximity sensor threshold (change)
 #define SENSOR_DEBOUNCE_TICKS 5	 // sensor debounce time in 20ms ticks
+
+#define SENS_AVG_COUNT 25	// number of ticks to average for sensor test
 
 // tone / duration pairs for beeper
 struct {
@@ -89,9 +94,11 @@ public:
   void updateButton();
   bool buttonPressed();
   bool buttonLong();
+  int readButton();
   void updateRevs();
   void clearRevs();
   int getRevs();
+  int readSensor();
   
 private:
   // variables
@@ -297,5 +304,24 @@ int CarControl::getRevs() {
   return revCount;
 }
 
+//
+// read button status now
+//
+int CarControl::readButton() {
+  return digitalRead( BUTTON_PIN);
+}
+
+
+//
+// read sensor as (1024-reading) with max 255
+//
+int CarControl::readSensor() {
+  int v = 1023 - analogRead( SENS_INPUT_PIN);
+  if( v < 0)
+    v = 0;
+  if( v > 255)
+    v = 255;
+  return v;
+}
 
 #endif

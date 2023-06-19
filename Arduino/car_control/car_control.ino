@@ -18,6 +18,9 @@
 // so 3 long presses just displays current value
 //
 
+// please update me!
+#define REVISION 1
+
 // #define DEBUG_STATE_ON_LEDS
 
 #include <EEPROM.h>
@@ -34,6 +37,9 @@ static int revs = 5;		// wheel revolutions to run
 #define MAX_REV 100		// rev setting limit
 
 static bool rev_change;		// flag: changed revs
+
+static int diag_page;
+static int s_sum;
 
 //
 // display a binary value 0-15 on the LEDs
@@ -53,6 +59,7 @@ void binaryLights( int v) {
 //
 void setup() {
   car.beep( BEEP_LONG);
+  binaryLights( REVISION);
   delay(1000);
   int lo = EEPROM.read(0);
   int hi = EEPROM.read(1);
@@ -63,9 +70,17 @@ void setup() {
   } else {
     car.beep( BEEP_SHORT);
   }
-  // start with taillights only on
-  car.setHeadLights( 0, 0);
-  car.setTailLights( 1, 1);
+  if( !car.readButton()) {
+    state = S_DIAG;
+    diag_page = 0;
+    while( !car.readButton())
+      ;
+    delay(100);
+  } else {
+    // start with taillights only on
+    car.setHeadLights( 0, 0);
+    car.setTailLights( 1, 1);
+  }
 }
 
 
@@ -178,6 +193,35 @@ void loop() {
     car.setHeadLights( 0, 0);
     car.setTailLights( 1, 1);
     state = S_IDLE;
+    break;
+    
+  case S_DIAG:			// diagnostic display
+    binaryLights( diag_page);
+    if( car.buttonPressed()) {
+      state = S_DIAG1;
+      // stop everything and get a sensor reading
+      s_sum = 0;
+      for( uint8_t i=0; i<SENS_AVG_COUNT; i++)
+	s_sum += car.readSensor();
+      s_sum /= SENS_AVG_COUNT;
+      car.beep(BEEP_LONG);
+    }
+    break;
+
+  case S_DIAG1:
+    binaryLights( s_sum);
+    if( car.buttonPressed()) {
+      state = S_DIAG2;
+      car.beep(BEEP_TICK);
+    }
+    break;
+
+  case S_DIAG2:
+    binaryLights( (s_sum >> 4));
+    if( car.buttonPressed()) {
+      state = S_DIAG;
+      car.beep(BEEP_TICK);
+    }      
     break;
     
   }

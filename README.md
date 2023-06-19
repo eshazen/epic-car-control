@@ -51,3 +51,11 @@ Note that the current setting can be displayed with:
 * **Long Press** - display 1's
 * **Long Press** - return to idle
 
+Sensor test:
+
+* Hold button while powering up
+* Then press the button repeatedly:
+  * first press: long beep, take reading, display low 4 bits
+  * second press: display high 4 bits
+
+Power down and up to exit test mode
