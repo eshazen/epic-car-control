@@ -2,17 +2,17 @@
 // CarControl class
 //
 // CarControl()                           constructor; setup I/O
-// void setMode( options)                 set mode options
-// void clearMode( options)               reset mode options
+// void setMode( options)                 set mode options (currently N/A)
+// void clearMode( options)               reset mode options (currently N/A)
 // void setSpeed( speed)                  set motor speed 0-255
 // void setHeadLights( left, right)       set headlights on/off
 // void setTailLights( left, right)       set taillights on/off
 // void updateButton()                    call every 20ms to scan for button
 // bool buttonPressed()                   if button pressed since last call
 // bool buttonLong()                      if last press was a long press
-// void updateRevs()                      check revolution sensor and update
+// void updateRevs()                      call every 20ms to check rev sensor
 // void clearRevs()                       clear the rev sensor
-// int getRevs()                         check the rev sensor
+// int getRevs()                          read rev sensor count
 
 #ifndef CarControl_h
 #define CarControl_h
@@ -44,15 +44,14 @@ enum {
 };
 
 // other constants
-#define TARGET_DISTANCE 10   // desired distance in revolutions
-#define ACCEL 5   // acceleration in speed units per tick
+#define ACCEL 5		         // acceleration in speed units per tick
 #define BUTTON_DEBOUNCE_TICKS 5  // button debounce in 20ms ticks
 #define BUTTON_LONG_PRESS 100    // button long press in 20ms ticks
 
-#define SENSOR_DELTA 50  // proximity sensor threshold
-#define SENSOR_DEBOUNCE_TICKS 5
+#define SENSOR_DELTA 50		 // proximity sensor threshold (change)
+#define SENSOR_DEBOUNCE_TICKS 5	 // sensor debounce time in 20ms ticks
 
-// tone / duration pairs
+// tone / duration pairs for beeper
 struct {
   int pitch;
   int dur;
@@ -74,6 +73,7 @@ enum {
   BEEP_ERROR = 5
 };
 
+// these currently N/A
 enum CarControlOptions {
   FixedDistance, EnableButton, BlinkHeadlights, BlinkTaillights
 };
@@ -111,6 +111,9 @@ private:
   int sens, sens0;		// current and previous sensor readings
 };
 
+//
+// constructor, setup hardware and pins
+//
 CarControl::CarControl() {
   
   // Declare output pins
@@ -167,6 +170,11 @@ void CarControl::beep( int type) {
   // tone( SPKR_PIN, 440, 100);
 }
 
+//
+// check for button press
+// set pressed for short press and longpress for long press
+// currently only triggers on release for short press
+//
 
 void CarControl::updateButton() {
 
@@ -183,7 +191,8 @@ void CarControl::updateButton() {
   // pressed: wait for countdown 
   case B_PRESS:
     if( --debounceTime == 0) {	// count down complete?
-      if( digitalRead( BUTTON_PIN)) { // released?
+      if( digitalRead( BUTTON_PIN)) {
+	// released, set debounce count and go to released state
 	debounceTime = BUTTON_DEBOUNCE_TICKS;
 	buttonState = B_RELEASE;
 	longpress = false;
@@ -199,7 +208,7 @@ void CarControl::updateButton() {
 
   // wait for release, check for long press
   case B_WAIT:
-    // register a long press
+    // register a long press if not already done
     if( pressTime > BUTTON_LONG_PRESS && !didpress) {
       	longpress = true;
 	pressed = false;
@@ -228,12 +237,14 @@ void CarControl::updateButton() {
       didpress = false;
     }
     break;
-
   }
 
 
 }
 
+//
+// return true on short press
+//
 bool CarControl::buttonPressed() {
   if( pressed) {
     pressed = false;
@@ -242,7 +253,9 @@ bool CarControl::buttonPressed() {
   return false;
 }
 
-
+//
+// return true on long press
+//
 bool CarControl::buttonLong() {
   if( longpress) {
     longpress = false;
@@ -252,6 +265,10 @@ bool CarControl::buttonLong() {
 }
 
 
+//
+// read revolution sensor
+// update revCount
+//
 void CarControl::updateRevs() {
   if( revTime) {
     --revTime;
@@ -266,10 +283,16 @@ void CarControl::updateRevs() {
   }
 }
 
+//
+// clear the revolution sensor
+//
 void CarControl::clearRevs() {
   revCount = 0;
 }
 
+//
+// read the revolution sensor
+//
 int CarControl::getRevs() {
   return revCount;
 }

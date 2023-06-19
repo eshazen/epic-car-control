@@ -18,19 +18,36 @@ on a model car used in the Partner Classes taught at EPIC.
 
 ## Software
 
-Software operation:
+Current software in `Arduino/car_control/car_control.ino`
 
->
-> power-up reads distance set from EEPROM
->    long (error) beep means invalid setting (default to 5)
-> Idle mode
->    short press - drive for programmed distance
->    long press - move to 10's set mode
-> 10's set mode
->    short press: add 10 revs
->    long press: to 1's set mode
-> 1's set mode
->    short press: add 1 revs
->    long press: save setting and exit to IDLE
->
+```
+power-up reads distance set from EEPROM
+   long (error) beep means invalid setting (default to 5)
+Idle mode
+   short press - drive for programmed distance
+   long press - move to 10's set mode
+10's set mode
+   short press: add 10 revs
+   long press: to 1's set mode
+1's set mode
+   short press: add 1 revs
+   long press: save setting and exit to IDLE
+```
+
+Current setting displayed in binary on LEDs as
+
+| Location    | Value |
+|:------------|:------|
+| Right Front | 1     |
+| Left Front  | 2     |
+| Left Rear   | 4     |
+| Right Rear  | 8     |
+
+(value is sum of lit LEDs, or zero if all off)
+
+Note that the current setting can be displayed with:
+
+* **Long Press** - display 10's
+* **Long Press** - display 1's
+* **Long Press** - return to idle
 
