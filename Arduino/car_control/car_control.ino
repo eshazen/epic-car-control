@@ -19,7 +19,7 @@
 //
 
 // please update me!
-#define REVISION 1
+#define REVISION 2
 
 // #define DEBUG_STATE_ON_LEDS
 
@@ -59,8 +59,24 @@ void binaryLights( int v) {
 //
 void setup() {
   car.beep( BEEP_LONG);
+  // display version for 1 sec
   binaryLights( REVISION);
   delay(1000);
+  // chase around the LEDs
+  for( int i=0; i<4; i++) {
+    car.setHeadLights( 0, 1);
+    car.setTailLights( 0, 0);
+    delay(100);  
+    car.setHeadLights( 1, 0);
+    car.setTailLights( 0, 0);
+    delay(100);  
+    car.setHeadLights( 0, 0);
+    car.setTailLights( 0, 1);
+    delay(100);  
+    car.setHeadLights( 0, 0);
+    car.setTailLights( 1, 0);
+    delay(100);  
+  }
   int lo = EEPROM.read(0);
   int hi = EEPROM.read(1);
   revs = (hi << 8) + lo;
@@ -68,8 +84,16 @@ void setup() {
     car.beep(BEEP_ERROR);
     revs = 5;
   } else {
+    for( int i=100; i<=1600; i*=2) {
+      tone( SPKR_PIN, i, 100);
+      delay(100);
+    }
     car.beep( BEEP_SHORT);
   }
+  // twitch the motor
+  car.setSpeed( 200);
+  delay(100);
+  car.setSpeed( 0);
   if( !car.readButton()) {
     state = S_DIAG;
     diag_page = 0;
@@ -80,6 +104,7 @@ void setup() {
     // start with taillights only on
     car.setHeadLights( 0, 0);
     car.setTailLights( 1, 1);
+    
   }
 }
 
