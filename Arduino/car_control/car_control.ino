@@ -18,8 +18,8 @@
 // so 3 long presses just displays current value
 //
 
-// please update me!
-#define REVISION 4
+// please update me! (max is 15 on 4 LEDs)
+#define REVISION 5
 
 // #define DEBUG_STATE_ON_LEDS
 
