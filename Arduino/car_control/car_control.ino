@@ -19,7 +19,7 @@
 //
 
 // please update me!
-#define REVISION 3
+#define REVISION 4
 
 // #define DEBUG_STATE_ON_LEDS
 
@@ -181,7 +181,6 @@ void loop() {
       blinkt = 0;
       binaryLights( 0);
     }
-
     if( car.buttonPressed()) {	// short press - increment count
       if( !rev_change) {
 	revs = 0;		// changing the revs, zero first
@@ -202,8 +201,7 @@ void loop() {
     break;
 
   case SP_ONES:			// program ones of rotations
-    // display ones on lights
-    // display tens on lights, slow blink
+    // display ones on lights, fast blink
     if( blinkt == PROG_FAST_BLINK)
       binaryLights( revs % 10);
     else if( blinkt == PROG_FAST_BLINK*2) {
