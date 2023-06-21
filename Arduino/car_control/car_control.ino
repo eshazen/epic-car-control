@@ -19,7 +19,7 @@
 //
 
 // please update me!
-#define REVISION 2
+#define REVISION 3
 
 // #define DEBUG_STATE_ON_LEDS
 
@@ -40,6 +40,11 @@ static bool rev_change;		// flag: changed revs
 
 static int diag_page;
 static int s_sum;
+
+// programming blink rate in ticks
+#define PROG_FAST_BLINK 6
+#define PROG_SLOW_BLINK 20
+static uint8_t blinkt;
 
 //
 // display a binary value 0-15 on the LEDs
@@ -84,7 +89,7 @@ void setup() {
     car.beep(BEEP_ERROR);
     revs = 5;
   } else {
-    for( int i=100; i<=1600; i*=2) {
+    for( int i=100; i<=400; i*=2) {
       tone( SPKR_PIN, i, 100);
       delay(100);
     }
@@ -130,6 +135,7 @@ void loop() {
     if( car.buttonLong()) {	// long press, start programming
       car.beep(BEEP_HIGH);
       state = SP_TENS;
+      blinkt = 0;
       rev_change = false;
     }
     break;
@@ -168,8 +174,14 @@ void loop() {
     break;
 
   case SP_TENS:			// program tens of rotations
-    // display tens on lights
-    binaryLights( revs / 10);
+    // display tens on lights, slow blink
+    if( blinkt == PROG_SLOW_BLINK)
+      binaryLights( revs / 10);
+    else if( blinkt == PROG_SLOW_BLINK*2) {
+      blinkt = 0;
+      binaryLights( 0);
+    }
+
     if( car.buttonPressed()) {	// short press - increment count
       if( !rev_change) {
 	revs = 0;		// changing the revs, zero first
@@ -185,12 +197,19 @@ void loop() {
     } else if( car.buttonLong()) { // long press - go set ones
       car.beep(BEEP_LOW);
       state = SP_ONES;
+      blinkt = 0;
     }
     break;
 
   case SP_ONES:			// program ones of rotations
     // display ones on lights
-    binaryLights( revs % 10);
+    // display tens on lights, slow blink
+    if( blinkt == PROG_FAST_BLINK)
+      binaryLights( revs % 10);
+    else if( blinkt == PROG_FAST_BLINK*2) {
+      blinkt = 0;
+      binaryLights( 0);
+    }
     if( car.buttonPressed()) {
       if( !rev_change) {
 	revs = 0;		// changing the revs, zero first
@@ -255,4 +274,5 @@ void loop() {
   car.updateRevs();		// update revolution sensor
   car.updateButton();		// update button press/debounce
   delay( 20);			// delay 20ms
+  ++blinkt;
 }
