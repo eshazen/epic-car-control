@@ -5,6 +5,7 @@ on a model car used in the Partner Classes taught at EPIC.
 
 ![car](images/3d_pcb.jpg)
 
+* [Electronics Talk](https://docs.google.com/presentation/d/14VeZ0qn1D4UStTRyjaAv7_6Aoot6B47C5gNpxyqcsiw/edit?usp=sharing) -- Google doc link for summer 2023 talk
 * [Software Development Log](SoftwareLog.md)
 * [Wiring Diagram](Slides/wiring_diagram.pdf) -- how to wire the PCB to the car
 * [Programming Instructions](Slides/car_program.pdf) -- instructions to change the target distance
