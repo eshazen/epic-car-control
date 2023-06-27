@@ -34,14 +34,14 @@ static int state = S_IDLE;	// initial state
 static int speed;		// speed 0-255
 static int revs = 5;		// wheel revolutions to run
 
-#define MAX_REV 100		// rev setting limit
+#define MAX_REV 100		// rev setting limit (default)
 
 static bool rev_change;		// flag: changed revs
 
 static int diag_page;
 static int s_sum;
 
-// programming blink rate in ticks
+// programming blink rate in ticks (20ms tick, approximately)
 #define PROG_FAST_BLINK 6
 #define PROG_SLOW_BLINK 20
 static uint8_t blinkt;
@@ -63,11 +63,10 @@ void binaryLights( int v) {
 // read the EEPROM and set the rev counter
 //
 void setup() {
-  car.beep( BEEP_LONG);
-  // display version for 1 sec
-  binaryLights( REVISION);
+  car.beep( BEEP_LONG);			  // start with a long beep
+  binaryLights( REVISION);		  // display version for 1 sec
   delay(1000);
-  // chase around the LEDs
+  // chase around the LEDs to test them
   for( int i=0; i<4; i++) {
     car.setHeadLights( 0, 1);
     car.setTailLights( 0, 0);
@@ -82,13 +81,14 @@ void setup() {
     car.setTailLights( 1, 0);
     delay(100);  
   }
+  // read the revolution setting from EEPROM (non-volatile memory)
   int lo = EEPROM.read(0);
   int hi = EEPROM.read(1);
   revs = (hi << 8) + lo;
-  if( revs <= 0 || revs > MAX_REV) {
+  if( revs <= 0 || revs > MAX_REV) {			// if invalid, beep, set to 5
     car.beep(BEEP_ERROR);
     revs = 5;
-  } else {
+  } else {						// make a happy sound
     for( int i=100; i<=400; i*=2) {
       tone( SPKR_PIN, i, 100);
       delay(100);
@@ -99,10 +99,11 @@ void setup() {
   car.setSpeed( 200);
   delay(100);
   car.setSpeed( 0);
+  // if button pressed on power-up, go to diagnostic mode
   if( !car.readButton()) {
     state = S_DIAG;
     diag_page = 0;
-    while( !car.readButton())
+    while( !car.readButton())				// wait for button release
       ;
     delay(100);
   } else {
@@ -271,6 +272,6 @@ void loop() {
   // do this every 20ms or so
   car.updateRevs();		// update revolution sensor
   car.updateButton();		// update button press/debounce
-  delay( 20);			// delay 20ms
-  ++blinkt;
+  delay( TICK_MS);		// delay 20ms
+  ++blinkt;			// increment counter for blinking LEDs
 }

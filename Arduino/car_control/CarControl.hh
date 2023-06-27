@@ -47,6 +47,8 @@ enum {
 };
 
 // other constants
+#define TICK_MS 20		// approximate refresh rate in ms
+
 #define ACCEL 5		         // acceleration in speed units per tick
 #define BUTTON_DEBOUNCE_TICKS 5  // button debounce in 20ms ticks
 #define BUTTON_LONG_PRESS 100    // button long press in 20ms ticks
