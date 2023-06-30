@@ -17,9 +17,13 @@
 // if no short presses, just display and leave unchanged
 // so 3 long presses just displays current value
 //
+// Mods:
+// Rev 5 - used for June class
+// Rev 6 - sensor threshold changed to 25 for a couple of cars
+// Rev 7 - add sensor calibration code.  Not working yet!
 
 // please update me! (max is 15 on 4 LEDs)
-#define REVISION 5
+#define REVISION 7
 
 // #define DEBUG_STATE_ON_LEDS
 
@@ -38,8 +42,7 @@ static int revs = 5;		// wheel revolutions to run
 
 static bool rev_change;		// flag: changed revs
 
-static int diag_page;
-static int s_sum;
+static int s_sum;		// sum for averaging
 
 // programming blink rate in ticks (20ms tick, approximately)
 #define PROG_FAST_BLINK 6
@@ -84,6 +87,8 @@ void setup() {
   // read the revolution setting from EEPROM (non-volatile memory)
   int lo = EEPROM.read(0);
   int hi = EEPROM.read(1);
+  car.s_min = EEPROM.read(2);
+  car.s_max = EEPROM.read(3);
   revs = (hi << 8) + lo;
   if( revs <= 0 || revs > MAX_REV) {			// if invalid, beep, set to 5
     car.beep(BEEP_ERROR);
@@ -102,7 +107,6 @@ void setup() {
   // if button pressed on power-up, go to diagnostic mode
   if( !car.readButton()) {
     state = S_DIAG;
-    diag_page = 0;
     while( !car.readButton())				// wait for button release
       ;
     delay(100);
@@ -239,15 +243,20 @@ void loop() {
     break;
     
   case S_DIAG:			// diagnostic display
-    binaryLights( diag_page);
     if( car.buttonPressed()) {
-      state = S_DIAG1;
-      // stop everything and get a sensor reading
-      s_sum = 0;
-      for( uint8_t i=0; i<SENS_AVG_COUNT; i++)
-	s_sum += car.readSensor();
-      s_sum /= SENS_AVG_COUNT;
-      car.beep(BEEP_LONG);
+      if( car.buttonLong()) {
+	// long press - calibrate the sensor
+	state = S_CALIB;
+	car.beep(BEEP_SHORT);
+      } else {
+	state = S_DIAG1;
+	// stop everything and get a sensor reading
+	s_sum = 0;
+	for( uint8_t i=0; i<SENS_AVG_COUNT; i++)
+	  s_sum += car.readSensor();
+	s_sum /= SENS_AVG_COUNT;
+	car.beep(BEEP_LONG);
+      }
     }
     break;
 
@@ -265,6 +274,30 @@ void loop() {
       state = S_DIAG;
       car.beep(BEEP_TICK);
     }      
+    break;
+
+  case S_CALIB:
+    // check 
+    car.s_min = 1023;
+    car.s_max = 0;
+    state = S_CALIB1;
+    break;
+
+  case S_CALIB1:
+    s_sum = car.readSensor();
+    if( s_sum > car.s_max) car.s_max = s_sum;
+    if( s_sum < car.s_min) car.s_min = s_sum;
+    if( car.buttonPressed()) {
+      state = S_CALIB2;
+      car.beep(BEEP_LONG);
+    }
+    break;
+
+  case S_CALIB2:
+    EEPROM.update(2, car.s_min);
+    EEPROM.update(3, car.s_max);
+    car.beep(BEEP_SHORT);
+    state = S_IDLE;
     break;
     
   }

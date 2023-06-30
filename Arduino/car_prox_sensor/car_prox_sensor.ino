@@ -9,16 +9,13 @@ const int sensorLEDPin = 2; // proximity sensor LED pin
 const int frontLEDPin = 4;  // headlight pin
 
 void setup() {
+  Serial.begin(115200);
   pinMode( sensorLEDPin, OUTPUT);
   pinMode( frontLEDPin, OUTPUT);
   digitalWrite( sensorLEDPin, HIGH);  // turn on the LED
 }
 
 void loop() {
-  if( analogRead( analogInPin) < 900)
-     digitalWrite( frontLEDPin, HIGH);
-  else
-     digitalWrite( frontLEDPin, LOW);
-  delay(10);
-    
+  Serial.println( analogRead( analogInPin));
+  delay(20);
 }

@@ -38,7 +38,8 @@ enum {
   // normal run states
   S_IDLE, S_ACCEL, S_RUN, S_DECEL,
   // programming states
-  SP_TENS, SP_ONES, SP_EXIT, S_DIAG, S_DIAG1, S_DIAG2
+  SP_TENS, SP_ONES, SP_EXIT, S_DIAG, S_DIAG1, S_DIAG2,
+  S_CALIB, S_CALIB1, S_CALIB2
 };
 
 // button press states
@@ -101,6 +102,7 @@ public:
   void clearRevs();
   int getRevs();
   int readSensor();
+  int s_min, s_max;		// sensor min and max from EEPROM/calibration
   
 private:
   // variables
@@ -118,6 +120,7 @@ private:
   int revCount;			// revolution counter
   uint8_t revTime;		// revolution "debounce" time
   int sens, sens0;		// current and previous sensor readings
+  int s_thr;			// sensor threshold
 };
 
 //
@@ -284,7 +287,7 @@ void CarControl::updateRevs() {
   } else {
     sens0 = sens;
     sens = analogRead( SENS_INPUT_PIN);
-    if( sens - sens0 > SENSOR_DELTA) {
+    if( sens < s_thr && sens0 >= s_thr) {
       revTime = SENSOR_DEBOUNCE_TICKS;
       ++revCount;
       beep(BEEP_TICK);
@@ -294,9 +297,11 @@ void CarControl::updateRevs() {
 
 //
 // clear the revolution sensor
+// also, recalculate threshold
 //
 void CarControl::clearRevs() {
   revCount = 0;
+  s_thr = (s_min + s_max)/2;
 }
 
 //

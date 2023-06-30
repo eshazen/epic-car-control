@@ -1,5 +1,15 @@
 # Software log
 
+**2023-06-30** Working on sensor calibration
+
+Created version 7.  Trying to get a sensor calibration code running.
+Having trouble triggering it from the diagnostic mode.
+
+**2023-06-29** First class
+
+Deployed version 5.  All worked well on about half of the cars, but
+the sensors didn't work well on the others.
+
 **2023-06-19** Continuing on software.
 
 The ISR stuff seems like a lot of work.  The debounce demo seems to
