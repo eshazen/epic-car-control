@@ -69,7 +69,8 @@ struct {
   {880, 20},			// tick
   {880, 500},			// high
   {220, 500},			// low
-  {660, 1000}			// error
+  {660, 1000},			// error
+  {1500, 20}			// tock
 };
 
 enum {
@@ -78,7 +79,8 @@ enum {
   BEEP_TICK = 2,
   BEEP_HIGH = 3,
   BEEP_LOW = 4,
-  BEEP_ERROR = 5
+  BEEP_ERROR = 5,
+  BEEP_TOCK = 6
 };
 
 // these currently N/A
@@ -286,8 +288,8 @@ void CarControl::updateRevs() {
     --revTime;
   } else {
     sens0 = sens;
-    sens = analogRead( SENS_INPUT_PIN);
-    if( sens < s_thr && sens0 >= s_thr) {
+    sens = readSensor();
+    if( sens0 > 0 && sens < s_thr && sens0 >= s_thr) {
       revTime = SENSOR_DEBOUNCE_TICKS;
       ++revCount;
       beep(BEEP_TICK);
@@ -302,6 +304,11 @@ void CarControl::updateRevs() {
 void CarControl::clearRevs() {
   revCount = 0;
   s_thr = (s_min + s_max)/2;
+  sens0 = sens = -1;
+#ifdef SERIAL_DEBUG
+  Serial.print("thr: ");
+  Serial.println( s_thr);
+#endif  
 }
 
 //

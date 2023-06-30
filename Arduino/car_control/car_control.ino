@@ -20,7 +20,9 @@
 // Mods:
 // Rev 5 - used for June class
 // Rev 6 - sensor threshold changed to 25 for a couple of cars
-// Rev 7 - add sensor calibration code.  Not working yet!
+// Rev 7 - add sensor calibration code.
+
+// #define SERIAL_DEBUG
 
 // please update me! (max is 15 on 4 LEDs)
 #define REVISION 7
@@ -66,6 +68,9 @@ void binaryLights( int v) {
 // read the EEPROM and set the rev counter
 //
 void setup() {
+#ifdef SERIAL_DEBUG
+  Serial.begin(115200);
+#endif  
   car.beep( BEEP_LONG);			  // start with a long beep
   binaryLights( REVISION);		  // display version for 1 sec
   delay(1000);
@@ -106,7 +111,8 @@ void setup() {
   car.setSpeed( 0);
   // if button pressed on power-up, go to diagnostic mode
   if( !car.readButton()) {
-    state = S_DIAG;
+    //    state = S_DIAG;
+    state = S_CALIB;    
     while( !car.readButton())				// wait for button release
       ;
     delay(100);
@@ -149,12 +155,13 @@ void loop() {
     car.setHeadLights( 0, 0);	// headlights off
     car.setTailLights( 0, 0);	// taillights off
     speed += ACCEL;
-    if( car.getRevs() >= revs) {
-      state = S_DECEL;		// hit the rev count - go decelerate
-    }
+//    if( car.getRevs() >= revs) {
+//      state = S_DECEL;		// hit the rev count - go decelerate
+//    }
     if( speed >= 255) {		// max speed?
       speed = 255;
       state = S_RUN;		// go to running state
+      car.clearRevs();
     }
     car.setSpeed( speed);
     break;
@@ -244,19 +251,13 @@ void loop() {
     
   case S_DIAG:			// diagnostic display
     if( car.buttonPressed()) {
-      if( car.buttonLong()) {
-	// long press - calibrate the sensor
-	state = S_CALIB;
-	car.beep(BEEP_SHORT);
-      } else {
-	state = S_DIAG1;
-	// stop everything and get a sensor reading
-	s_sum = 0;
-	for( uint8_t i=0; i<SENS_AVG_COUNT; i++)
-	  s_sum += car.readSensor();
-	s_sum /= SENS_AVG_COUNT;
-	car.beep(BEEP_LONG);
-      }
+      state = S_DIAG1;
+      // stop everything and get a sensor reading
+      s_sum = 0;
+      for( uint8_t i=0; i<SENS_AVG_COUNT; i++)
+	s_sum += car.readSensor();
+      s_sum /= SENS_AVG_COUNT;
+      car.beep(BEEP_LONG);
     }
     break;
 
@@ -277,7 +278,8 @@ void loop() {
     break;
 
   case S_CALIB:
-    // check 
+    Serial.println("calib");
+    binaryLights( 15);
     car.s_min = 1023;
     car.s_max = 0;
     state = S_CALIB1;
@@ -285,8 +287,14 @@ void loop() {
 
   case S_CALIB1:
     s_sum = car.readSensor();
-    if( s_sum > car.s_max) car.s_max = s_sum;
-    if( s_sum < car.s_min) car.s_min = s_sum;
+    if( s_sum > car.s_max)  {
+      car.s_max = s_sum;
+      car.beep( BEEP_TICK);
+    }
+    if( s_sum < car.s_min) {
+      car.s_min = s_sum;
+      car.beep( BEEP_TOCK);
+    }
     if( car.buttonPressed()) {
       state = S_CALIB2;
       car.beep(BEEP_LONG);
@@ -294,12 +302,20 @@ void loop() {
     break;
 
   case S_CALIB2:
+#ifdef SERIAL_DEBUG
+    Serial.print("cal: ");
+    Serial.print(car.s_min);
+    Serial.print("-");
+    Serial.println(car.s_max);
+#endif    
     EEPROM.update(2, car.s_min);
     EEPROM.update(3, car.s_max);
     car.beep(BEEP_SHORT);
+    // start with taillights only on
+    car.setHeadLights( 0, 0);
+    car.setTailLights( 1, 1);
     state = S_IDLE;
     break;
-    
   }
 
   // do this every 20ms or so

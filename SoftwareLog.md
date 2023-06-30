@@ -2,8 +2,16 @@
 
 **2023-06-30** Working on sensor calibration
 
-Created version 7.  Trying to get a sensor calibration code running.
-Having trouble triggering it from the diagnostic mode.
+Created version 7.  Preliminary calibration mode.  Collects minimum
+and maximum sensor readings and a threshold midway between them,
+which is stored in EEPROM locations (2, 3).
+
+Activate re-calibration by holding button down on power-up (replaces readout mode,
+for now).  Spin front wheel until beeping stops.  Press button once
+to go to normal driving mode.
+
+A few other tweaks:  Ignore rotation sensor until running at speed.
+I think it works well enough now.
 
 **2023-06-29** First class
 
