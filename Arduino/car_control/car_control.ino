@@ -21,11 +21,12 @@
 // Rev 5 - used for June class
 // Rev 6 - sensor threshold changed to 25 for a couple of cars
 // Rev 7 - add sensor calibration code.
+// Rev 8 - increase readSensor() range from 255 to 1023
 
 // #define SERIAL_DEBUG
 
 // please update me! (max is 15 on 4 LEDs)
-#define REVISION 7
+#define REVISION 8
 
 // #define DEBUG_STATE_ON_LEDS
 

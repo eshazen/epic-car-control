@@ -327,14 +327,14 @@ int CarControl::readButton() {
 
 
 //
-// read sensor as (1024-reading) with max 255
+// read sensor as (1024-reading) 
 //
 int CarControl::readSensor() {
   int v = 1023 - analogRead( SENS_INPUT_PIN);
   if( v < 0)
     v = 0;
-  if( v > 255)
-    v = 255;
+    // use full range now
+    // if( v > 255) v = 255;
   return v;
 }
 

@@ -17,5 +17,5 @@ void setup() {
 
 void loop() {
   Serial.println( analogRead( analogInPin));
-  delay(20);
+  delay(500);
 }
