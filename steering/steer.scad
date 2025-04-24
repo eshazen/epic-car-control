@@ -32,10 +32,16 @@ module bracket() {
      translate( [-wheel_pivot_offset, -bracket_stock_wid/2, 0])
 	  cube( [wheel_pivot_offset, bracket_stock_wid, bracket_stock_thk]);
 
-     rotate( [0, 0, -angle])
-     translate( [0, -bracket_stock_wid/2, 0])
-     cube( [bracket_arm_len, bracket_stock_wid, bracket_stock_thk]);
-
+     rotate( [0, 0, -angle]) {
+       translate( [0, -bracket_stock_wid/2, 0]) {
+	 cube( [bracket_arm_len, bracket_stock_wid, bracket_stock_thk]);
+	 translate( [bracket_arm_len, bracket_stock_wid/2, 0]) {
+	   // now we're at tie rod attach point
+	   cylinder( h=bracket_stock_thk, d=bracket_stock_wid);
+	   color("violet") cylinder( h=50, d=1);
+	 }
+       }
+     }
      cylinder( h=bracket_stock_thk, d=bracket_stock_wid);
 }
 
