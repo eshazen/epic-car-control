@@ -3,6 +3,10 @@ $fn = 32;
 e = 0.1;
 mm = 25.4;
 
+// angle to steer
+steer_angle = ($t-0.5)*20;
+//steer_angle = 10;
+
 // update to actual wheels
 wheel_dia = 2.0*mm;
 wheel_wid = 1*mm;
@@ -48,13 +52,13 @@ module crossbar() {
   // calculate endpoints of steering bar
   // left wheel
   left_x = wheel_pivot_offset-(vehicle_wid/2-wheel_wid) +
-     cos(angle) * bracket_arm_len;
+     cos(angle-steer_angle) * bracket_arm_len;
   left_y = wheelbase - sin(angle) * bracket_arm_len;
   left_z = 0;
 
   // right wheel
   right_x = -(wheel_pivot_offset-(vehicle_wid/2-wheel_wid) +
-	      cos(angle) * bracket_arm_len);
+	      cos(angle+steer_angle) * bracket_arm_len);
   right_y = wheelbase - sin(angle) * bracket_arm_len;
   right_z = 0;
 
@@ -97,26 +101,29 @@ module bracket() {
 }
 
 
-module wheel_at( x, y, z) {
-
-  translate( [ x, y, z]) {
-    rotate( [0, 270, 0]) {
-      % cylinder( d=wheel_dia, h=wheel_wid);
-      translate( [0, 0, -(axle_len-wheel_wid)/2])
-	color("green") cylinder( d=axle_dia, h=axle_len);
-    }
-    // steering pivot
-    translate( [wheel_pivot_offset, 0, 0]) {
-      color("blue") cylinder( h=25, d=1);
-      bracket();
+module wheel_at( x, y, z, steer) {
+  translate( [ x+wheel_pivot_offset, y, z]) {
+    rotate( [0, 0, steer]) {
+      translate( [-wheel_pivot_offset, 0, 0]) {
+	rotate( [0, 270, 0]) {
+	  % cylinder( d=wheel_dia, h=wheel_wid);
+	  translate( [0, 0, -(axle_len-wheel_wid)/2])
+	    color("green") cylinder( d=axle_dia, h=axle_len);
+	}
+	// steering pivot
+	translate( [wheel_pivot_offset, 0, 0]) {
+	  color("blue") cylinder( h=25, d=1);
+	  bracket();
+	}
+      }
     }
   }
 }
 
 // left front wheel
-wheel_at( -(vehicle_wid/2-wheel_wid), wheelbase, 0);
+wheel_at( -(vehicle_wid/2-wheel_wid), wheelbase, 0, steer_angle);
 // right front wheel
-mirror( [1, 0 ,0]) wheel_at( -(vehicle_wid/2-wheel_wid), wheelbase, 0);
+mirror( [1, 0 ,0]) wheel_at( -(vehicle_wid/2-wheel_wid), wheelbase, 0, -steer_angle);
 
 crossbar();
 translate( [-vehicle_wid/2, -chassis_tab_len/2, -5])
