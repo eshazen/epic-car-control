@@ -3523,6 +3523,17 @@
 		)
 		(uuid "376f5e96-b14f-466f-bf15-14ece72faf50")
 	)
+	(text "Model car control electronics"
+		(exclude_from_sim no)
+		(at 180.594 177.8 0)
+		(effects
+			(font
+				(size 3.175 3.175)
+			)
+			(justify left)
+		)
+		(uuid "37a11dab-bf17-4684-a1cc-f5f3cc5b8439")
+	)
 	(text "Diode drop for\n5V supply"
 		(exclude_from_sim no)
 		(at 96.52 60.96 0)
@@ -3555,6 +3566,16 @@
 			(justify left bottom)
 		)
 		(uuid "7451cf16-cd36-4cdd-8a92-0015def8f1c1")
+	)
+	(text "Boston University EPIC"
+		(exclude_from_sim no)
+		(at 223.012 171.196 0)
+		(effects
+			(font
+				(size 5.08 5.08)
+			)
+		)
+		(uuid "848c1b44-2881-49d3-94a3-c16801287ceb")
 	)
 	(text "Optical proximity\nsensor"
 		(exclude_from_sim no)
