@@ -23,11 +23,12 @@
 // Rev 7 - add sensor calibration code.
 // Rev 8 - increase readSensor() range from 255 to 1023
 // Rev 9 - debug/improved sensor EEPROM
+// Rev 10 - fix bug in sensor EEPROM writing
 
 // #define SERIAL_DEBUG
 
 // please update me! (max is 15 on 4 LEDs)
-#define REVISION 9
+#define REVISION 10
 
 // #define DEBUG_STATE_ON_LEDS
 
@@ -36,7 +37,11 @@
 
 CarControl car;			// create instance of car control
 
-// EEPROM offsets
+// EEPROM offsets, all 16-bit values
+// 0 = 0x5791
+// 2 = rev counter
+// 4 = sensor low value
+// 6 = sensor high value
 static const int EEP_MAGIC = 0;	// magic number 5791
 static const int EEP_REVS = 2;	// revs counter (16 bits)
 static const int EEP_SENSE_MIN = 4; // Sensor low value
@@ -343,7 +348,7 @@ void loop() {
     EEPROM.update(EEP_SENSE_MIN, car.s_min & 0xff);
     EEPROM.update(EEP_SENSE_MIN+1, car.s_min >> 8);
     EEPROM.update(EEP_SENSE_MAX, car.s_max & 0xff);
-    EEPROM.update(EEP_SENSE_MAX, car.s_max & 0xff);
+    EEPROM.update(EEP_SENSE_MAX, car.s_max >> 8);
     car.beep(BEEP_SHORT);
     // start with taillights only on
     car.setHeadLights( 0, 0);
