@@ -1,5 +1,18 @@
 # Software log
 
+**2025-06-08** Version 10
+
+Another attempt to fix the EEPROM code
+
+**2025-06-03** Version 9
+
+Still buggy EEPROM code
+
+**2024-06-01** Version 8
+
+Update sensor calibration values to 16 bit but bugs in EEPROM save so
+doesn't restore correctly on power-up.
+
 **2023-06-30** Working on sensor calibration
 
 Created version 7.  Preliminary calibration mode.  Collects minimum
