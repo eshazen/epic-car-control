@@ -105,6 +105,7 @@ public:
   int getRevs();
   int readSensor();
   int s_min, s_max;		// sensor min and max from EEPROM/calibration
+  int s_thr;			// sensor threshold
   
 private:
   // variables
@@ -122,7 +123,6 @@ private:
   int revCount;			// revolution counter
   uint8_t revTime;		// revolution "debounce" time
   int sens, sens0;		// current and previous sensor readings
-  int s_thr;			// sensor threshold
 };
 
 //

@@ -30,12 +30,35 @@
 // please update me! (max is 15 on 4 LEDs)
 #define REVISION 10
 
+
+
 // #define DEBUG_STATE_ON_LEDS
 
 #include <EEPROM.h>
 #include "CarControl.hh"
 
 CarControl car;			// create instance of car control
+
+#ifdef SERIAL_DEBUG
+void dump_eeprom( char *s) {
+  // print EEPROM contents
+  Serial.println(s);
+  for( int i=0; i<8; i+=2) {
+    Serial.print(i);
+    Serial.print(" = ");
+    Serial.println( eeprom_read_word(i));
+  }
+  // print car variables
+  Serial.print("s_min: ");
+  Serial.print(car.s_min);
+  Serial.print(" s_max: ");
+  Serial.print(car.s_max);
+  Serial.print(" s_thr: ");
+  Serial.println(car.s_thr);
+}
+#endif
+
+
 
 // EEPROM offsets, all 16-bit values
 // 0 = 0x5791
@@ -75,8 +98,6 @@ void binaryLights( int v) {
   digitalWrite( LED3_PIN, (v & 4) != 0);
   digitalWrite( LED4_PIN, (v & 8) != 0);
 }
-  
-
 
 //
 // setup - most hardware setup already done in CarControl()
@@ -85,6 +106,8 @@ void binaryLights( int v) {
 void setup() {
 #ifdef SERIAL_DEBUG
   Serial.begin(115200);
+  delay(5000);
+  Serial.println("Debug mode");
 #endif  
   car.beep( BEEP_LONG);			  // start with a long beep
   binaryLights( REVISION);		  // display version for 1 sec
@@ -104,14 +127,23 @@ void setup() {
     car.setTailLights( 1, 0);
     delay(100);  
   }
+#ifdef SERIAL_DEBUG
+  dump_eeprom("startup");
+#endif  
   // read stuff from non-volatile memory
   EEPROM.get( EEP_MAGIC, s_sum);
   if( s_sum == EEP_MAGIC_VALUE) { // EEPROM is valid
+#ifdef SERIAL_DEBUG
+    Serial.println("EE OK");
+#endif    
     EEPROM.get( EEP_REVS, revs);
     EEPROM.get( EEP_SENSE_MIN, car.s_min);
     EEPROM.get( EEP_SENSE_MAX, car.s_max);
     car.beep( BEEP_SHORT);
   } else {			// EEPROM is invalid
+#ifdef SERIAL_DEBUG
+    Serial.println("EE bad");
+#endif    
     revs = 5;
     car.s_min = 500;
     car.s_max = 1000;
@@ -125,13 +157,8 @@ void setup() {
     car.beep( BEEP_ERROR);
   }
 #ifdef SERIAL_DEBUG
-  Serial.print("Revs: ");
-  Serial.print( revs);
-  Serial.print("  Min/max: ");
-  Serial.print( car.s_min);
-  Serial.print( " ");
-  Serial.println( car.s_max);
-#endif  
+  dump_eeprom("fixed");
+#endif
   if( revs <= 0 || revs > MAX_REV) {			// if invalid, beep, set to 5
     car.beep(BEEP_ERROR);
     revs = 5;
@@ -327,10 +354,18 @@ void loop() {
     if( s_sum > car.s_max)  {
       car.s_max = s_sum;
       car.beep( BEEP_TICK);
+#ifdef SERIAL_DEBUG
+      Serial.print("max ");
+      Serial.println( car.s_max);
+#endif      
     }
     if( s_sum < car.s_min) {
       car.s_min = s_sum;
       car.beep( BEEP_TOCK);
+#ifdef SERIAL_DEBUG
+      Serial.print("min ");
+      Serial.println( car.s_min);
+#endif      
     }
     if( car.buttonPressed()) {
       state = S_CALIB2;
@@ -348,7 +383,7 @@ void loop() {
     EEPROM.update(EEP_SENSE_MIN, car.s_min & 0xff);
     EEPROM.update(EEP_SENSE_MIN+1, car.s_min >> 8);
     EEPROM.update(EEP_SENSE_MAX, car.s_max & 0xff);
-    EEPROM.update(EEP_SENSE_MAX, car.s_max >> 8);
+    EEPROM.update(EEP_SENSE_MAX+1, car.s_max >> 8);
     car.beep(BEEP_SHORT);
     // start with taillights only on
     car.setHeadLights( 0, 0);

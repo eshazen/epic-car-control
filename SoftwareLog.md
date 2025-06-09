@@ -2,7 +2,8 @@
 
 **2025-06-08** Version 10
 
-Another attempt to fix the EEPROM code
+Another attempt to fix the EEPROM code.  Seems ok.
+Programmed (40) boards for 2025 class.
 
 **2025-06-03** Version 9
 
